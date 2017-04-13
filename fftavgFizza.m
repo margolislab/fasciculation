@@ -14,19 +14,22 @@ function [] = fftavgFizza( start_directory )
 %         fprintf('Detecting\n');
 % end %detector function
 
+prompt = 'How many frames should be analyzed?\n';          %user input number of frames to be analyzed
+frames = input(prompt);                                 % frames cannot be greater than # data points in smallest data set
+
 function [P1] = notFourier(F) 
         Y = fft(F);                            %fft
-        P2 = abs(Y/5000);                       %not a clue
-        P1 = 2*P2(1:5000,:);                    %fughetaboutit
+        P2 = abs(Y/frames);                       %not a clue
+        P1 = 2*P2(1:frames,:);                    %fughetaboutit
         P1(2:end-1,:) = 2*P1(2:end-1,:);       %now you're just fucking with me
 end
 
 function[] = plotsave(avg)
         Fs = 500;                                 %sampling frequency
-        f = Fs*(1:5000)/5000;                    %stuff
+        f = Fs*(1:frames)/frames;                    %stuff
         
         plot(f,avg)                                          %plotting the fft analysis for each whisker
-        axis([0 50 0 1.5]);                                    %[xmin xmax ymin ymax]
+        axis([0 25 0 2.2]);                                    %[xmin xmax ymin ymax]
         title('Single-Sided Amplitude Spectrum of F(t)')
         xlabel('Frequency (Hz)')
         ylabel('|Power|')
@@ -49,7 +52,7 @@ x = dir('*.mat');                             %directory of all .mat files inclu
         x = x(1:jitlength);                   %returns just .mat files w/o jit
     end                                 
 fil = length(x);                              %length of directory of .mat files w/o jit files
-T = fil*(10);                                %time interval graphed (5000 frames = 10 sec)
+T = fil*(frames/500);                                %time interval graphed (frames frames = 10 sec)
 
     if fil < 1
      fprintf('error: no files found.\n');
@@ -60,8 +63,8 @@ data_array = struct2array(data_array);
 [~,numWhiskers] = size(data_array); 
 
     if fil == 1
-        c = nanmean(data_array(1:5000,:));                              %select first 400 points from each column and finds average of each column
-        t = data_array(1:5000,:);                                       %first 400 points for each column
+        c = nanmean(data_array(1:frames,:));                              %select first 400 points from each column and finds average of each column
+        t = data_array(1:frames,:);                                       %first 400 points for each column
         rawData = bsxfun(@minus,t,c);                                  %function to subtract vector average from array
         A = notFourier(rawData);
         plotsave(A);
@@ -73,8 +76,8 @@ data_array = struct2array(data_array);
                     for ii=1:fil
                       data_array = load(x(ii).name);  
                       data_array = struct2array(data_array);
-                      c = nanmean(data_array(1:5000,yy));                      %select first 400 points from each column and finds average of each column
-                      t = data_array(1:5000,yy);                               %first 400 points for each column
+                      c = nanmean(data_array(1:frames,yy));                      %select first 400 points from each column and finds average of each column
+                      t = data_array(1:frames,yy);                               %first 400 points for each column
                       F = bsxfun(@minus,t,c);                                %function to subtract vector average from array
                       F = notFourier(F);
                       oneWhisker = [oneWhisker,F];                     
