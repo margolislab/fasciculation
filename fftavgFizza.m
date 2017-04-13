@@ -29,7 +29,7 @@ function[] = plotsave(avg)
         f = Fs*(1:frames)/frames;                    %stuff
         
         plot(f,avg)                                          %plotting the fft analysis for each whisker
-        axis([0 25 0 2.2]);                                    %[xmin xmax ymin ymax]
+        axis([0 40 0 2.2]);                                    %[xmin xmax ymin ymax]
         title('Single-Sided Amplitude Spectrum of F(t)')
         xlabel('Frequency (Hz)')
         ylabel('|Power|')
